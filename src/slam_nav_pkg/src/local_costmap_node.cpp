@@ -18,8 +18,9 @@ public:
         nh.param("inflation_radius", inflation_radius_, 0.2); // 膨胀半径
         nh.param("max_cost", max_cost_, 100);
         nh.param("min_cost", min_cost_, 1);
+        nh.param("costmap_topic", costmap_topic_, std::string("/local_costmap"));
 
-        costmap_pub_ = nh.advertise<nav_msgs::OccupancyGrid>("local_costmap", 1, true);
+        costmap_pub_ = nh.advertise<nav_msgs::OccupancyGrid>(costmap_topic_, 1, true);
         scan_sub_ = nh.subscribe("/scan", 1, &LocalCostmapNode::scanCallback, this);
     }
 
@@ -116,6 +117,7 @@ private:
     double inflation_radius_;
     int max_cost_;
     int min_cost_;
+    std::string costmap_topic_;
 };
 
 int main(int argc, char** argv)

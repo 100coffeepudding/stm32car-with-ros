@@ -185,42 +185,85 @@ public:
     }
 
     // 检测前方是否有障碍
-    bool checkFrontObstacle()
+bool checkFrontObstacle(double forward_m = 0.2, double width_m = 0.3, int cost_threshold = 50)
+{
+    if (current_localmap.data.empty())
     {
-        if (!localmap_received)
-            return false;
-
-        // 获取局部costmap信息
-        int width = current_localmap.info.width;
-        int height = current_localmap.info.height;
-        double resolution = current_localmap.info.resolution;
-        int center_x = width / 2;
-        int center_y = height / 2;
-
-        // 检查前方区域，比如正前方1m*0.4m区域
-        int check_cells_x = static_cast<int>(0.5 / resolution); // 1米
-        int check_cells_y = static_cast<int>(0.4 / resolution); // 0.4米宽
-
-        for (int dy = -check_cells_y / 2; dy <= check_cells_y / 2; dy++)
-        {
-            for (int dx = 0; dx <= check_cells_x; dx++) // 只看前方
-            {
-                int mx = center_x + dx;
-                int my = center_y + dy;
-                if (mx < 0 || mx >= width || my < 0 || my >= height)
-                    continue;
-
-                int idx = my * width + mx;
-                if (current_localmap.data[idx] >= 50)
-                {
-                    ROS_WARN_THROTTLE(1.0, "Obstacle detected at local_costmap! Cost=%d", current_localmap.data[idx]);
-                    return true;
-                }
-            }
-        }
-
+        ROS_WARN_THROTTLE(2.0, "No local costmap available yet.");
         return false;
     }
+
+    // 获取机器人在 costmap frame（例如 odom）下的位置与朝向
+    tf::StampedTransform transform;
+    try {
+        listener.lookupTransform(current_localmap.header.frame_id, "base_link", ros::Time(0), transform);
+    } catch (tf::TransformException &ex) {
+        ROS_WARN_THROTTLE(1.0, "TF lookup failed: %s", ex.what());
+        return false;
+    }
+
+    double robot_x = transform.getOrigin().x();
+    double robot_y = transform.getOrigin().y();
+    double robot_yaw = tf::getYaw(transform.getRotation());
+
+    // costmap 信息
+    int width = current_localmap.info.width;
+    int height = current_localmap.info.height;
+    double resolution = current_localmap.info.resolution;
+    double origin_x = current_localmap.info.origin.position.x;
+    double origin_y = current_localmap.info.origin.position.y;
+
+   /*  // 调试打印（只打印一次/限频）
+    ROS_DEBUG_THROTTLE(2.0, "Localmap frame=%s size=%dx%d res=%.3f origin=(%.3f,%.3f)",
+                       current_localmap.header.frame_id.c_str(),
+                       width, height, resolution, origin_x, origin_y);
+    ROS_DEBUG_THROTTLE(1.0, "Robot pos in map frame: (%.3f, %.3f) yaw=%.3f deg",
+                       robot_x, robot_y, robot_yaw * 180.0 / M_PI); */
+
+    // 前方检测区域转换为格子数（注意以米为单位先计算，再转换为索引）
+    int forward_cells = std::max(1, static_cast<int>(std::ceil(forward_m / resolution)));
+    int half_width_cells = std::max(0, static_cast<int>(std::ceil((width_m / 2.0) / resolution)));
+
+    // 遍历前方矩形：用局部坐标（米） -> 旋转到 map(odom) -> 转为网格索引
+    for (int ix = 0; ix <= forward_cells; ++ix)            // ix 表示沿前方的第 ix 个 cell（0..forward）
+    {
+        double local_x = ix * resolution;                  // 米
+        for (int iy = -half_width_cells; iy <= half_width_cells; ++iy)
+        {
+            double local_y = iy * resolution;              // 米 (左负右正)
+
+            // 把局部 base_link(x,y) 旋转平移到 map(frame) 坐标系 (wx, wy)
+            double wx = robot_x + local_x * std::cos(robot_yaw) - local_y * std::sin(robot_yaw);
+            double wy = robot_y + local_x * std::sin(robot_yaw) + local_y * std::cos(robot_yaw);
+
+            // world -> map 索引（使用 floor 更安全）
+            int mx = static_cast<int>(std::floor((wx - origin_x) / resolution));
+            int my = static_cast<int>(std::floor((wy - origin_y) / resolution));
+
+            if (mx < 0 || mx >= width || my < 0 || my >= height)
+                continue;
+
+            int idx = my * width + mx;
+            int cost = current_localmap.data[idx];
+
+            if (cost >= cost_threshold)
+            {
+                // 计算该格中心的世界坐标（米）
+                double obs_x = origin_x + (mx + 0.5) * resolution;
+                double obs_y = origin_y + (my + 0.5) * resolution;
+
+                ROS_WARN_THROTTLE(1.0,
+                    "Obstacle detected! cost=%d | map idx=(%d,%d) | world=(%.3f, %.3f) | robot=(%.3f, %.3f) yaw=%.1fdeg | local=(%.3f,%.3f)",
+                    cost, mx, my, obs_x, obs_y, robot_x, robot_y, robot_yaw * 180.0 / M_PI, local_x, local_y);
+
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 
     // 局部路径规划，避障
     void local_planner()
@@ -604,6 +647,7 @@ private:
         goal.target_pose.header.stamp = ros::Time::now();
         goal.target_pose.pose = msg->pose;
 
+        checkFrontObstacle();
         ROS_WARN("ischeck %d",checkFrontObstacle());
 
         //executeCB(boost::make_shared<move_base_msgs::MoveBaseGoal>(goal));
