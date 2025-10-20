@@ -4,3 +4,4 @@ logs/
 install/
 *.pyc
 *.swp
+.vscode/
