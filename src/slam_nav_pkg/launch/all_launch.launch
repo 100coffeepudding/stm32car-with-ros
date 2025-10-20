@@ -32,7 +32,7 @@
     </node>
 
     <node pkg="slam_nav_pkg" type="global_costmap_node" name="global_costmap_node" >
-    <param name="inflation_radius_m" value="0.15"/>
+    <param name="inflation_radius_m" value="0.25"/>
     <param name="map_topic" value="/map"/>
     <param name="costmap_topic" value="/global_costmap"/>
     <param name="threshold" value="50"/>

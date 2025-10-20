@@ -145,8 +145,8 @@ public:
     {
         as_.start();
         ROS_INFO("FakeMoveBase server started");
-        exit_x_ = 2.0;
-        exit_y_ = -2.0;
+        exit_x_ = 20;
+        exit_y_ = -20.0;
         exit_tolerance_ = 0.5;
         current_state_ = Search;
         state_pub_ = nh_.advertise<std_msgs::String>("/robot_state", 10);
@@ -260,6 +260,8 @@ public:
             sprintf(cmd, "F00");
             send(sock_cmd, cmd, strlen(cmd), 0);
             sleep(1.5);
+            sprintf(cmd, "S00");
+            send(sock_cmd, cmd, strlen(cmd), 0);
         }
         else if (Ltest / 20 > 0.5)
         {
@@ -270,6 +272,8 @@ public:
             sprintf(cmd, "F00");
             send(sock_cmd, cmd, strlen(cmd), 0);
             sleep(1.5);
+            sprintf(cmd, "S00");
+            send(sock_cmd, cmd, strlen(cmd), 0);
         }
         else
         {
@@ -351,23 +355,38 @@ public:
         }
         ROS_INFO("Goal in robot frame: dx=%.2f, dy=%.2f", dx, dy);
         double distance = sqrt(dx * dx + dy * dy);
-        ros::Rate rate(10);
-        int testcount = 0;
+        double angle_rad = atan2(dy, dx);
+        double angle_degree = angle_rad / M_PI * 180;
         char cmd[3];
+        ros::Rate rate(20);
+        int testcount = 0;
+        turn_control(dx, dy);
+        ros::Duration(0.5).sleep();
+        if (distance > tolerance)
+        {
+            sprintf(cmd, "F00");
+            ROS_INFO(cmd);
+            send(sock_cmd, cmd, strlen(cmd), 0);
+        }
         while (distance > tolerance && ros::ok())
         {
             mapGoalToRobotFrame(goal_point_map, dx, dy);
             distance = sqrt(dx * dx + dy * dy);
-            turn_control(dx, dy);
-            sprintf(cmd, "F00");
-            ROS_INFO(cmd);
-            send(sock_cmd, cmd, strlen(cmd), 0);
-
+            double angle_rad = atan2(dy, dx);
+            double angle_degree = angle_rad / M_PI * 180;
+            if (angle_degree > 30)
+            {
+                turn_control(dx, dy);
+                sprintf(cmd, "F00");
+                ROS_INFO(cmd);
+                send(sock_cmd, cmd, strlen(cmd), 0);
+            }
+            ROS_WARN("ischeck %d",checkFrontObstacle());
             if (checkFrontObstacle())
             {
                 testcount++;
                 local_planner();
-                if (testcount > 3)
+                if (testcount > 2)
                 {
                     ROS_ERROR("Local planner stuck, marking goal as unreachable.");
                     return false;
@@ -580,14 +599,16 @@ private:
 
         ROS_INFO("Received RViz 2D Nav Goal: x=%.2f y=%.2f yaw=%.2f", x, y, yaw);
 
-        /*move_base_msgs::MoveBaseGoal goal;
+        move_base_msgs::MoveBaseGoal goal;
         goal.target_pose.header.frame_id = "map";
         goal.target_pose.header.stamp = ros::Time::now();
         goal.target_pose.pose = msg->pose;
 
-        executeCB(boost::make_shared<move_base_msgs::MoveBaseGoal>(goal));*/
+        ROS_WARN("ischeck %d",checkFrontObstacle());
 
-        std_msgs::String replan;
+        //executeCB(boost::make_shared<move_base_msgs::MoveBaseGoal>(goal));
+
+        /* std_msgs::String replan;
         replan.data = "Replan";
         replan_pub.publish(replan);
 
@@ -598,23 +619,21 @@ private:
         goal_pub.publish(goal_point_map);
 
         geometry_msgs::Point robot_point_map;
-        goal_point_map.x = robot_x_map;
-        goal_point_map.y = robot_y_map;
-        goal_point_map.z = 0.0;
+        robot_point_map.x = robot_x_map;
+        robot_point_map.y = robot_y_map;
+        robot_point_map.z = 0.0;
         robot_pub.publish(robot_point_map);
 
         sleep(0.5);
         ROS_INFO("State: Plan");
         std_msgs::String msg1;
         msg1.data = "Plan";
-        state_pub_.publish(msg1);
-
-
+        state_pub_.publish(msg1); */
     }
 
     void pathPointCallback(const nav_msgs::Path::ConstPtr &msg)
     {
-
+        ;
     }
 };
 

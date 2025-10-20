@@ -112,7 +112,7 @@ public:
             double cos_angle = dot / (norm1 * norm2 + 1e-6);
 
             // 当方向变化超过阈值（比如15°）时保留点
-            if (cos_angle < cos(30.0 * M_PI / 180.0))
+            if (cos_angle < cos(15.0 * M_PI / 180.0))
                 simplified.push_back(path_points[i]);
         }
 
@@ -120,7 +120,29 @@ public:
         return simplified;
     }
 
+    std::vector<geometry_msgs::PoseStamped> simplifyByDistance(
+        const std::vector<geometry_msgs::PoseStamped> &path_points, double min_dist)
+    {
+        std::vector<geometry_msgs::PoseStamped> simplified;
+        if (path_points.empty())
+            return simplified;
 
+        simplified.push_back(path_points.front());
+        geometry_msgs::PoseStamped last = path_points.front();
+
+        for (auto &p : path_points)
+        {
+            double dx = p.pose.position.x - last.pose.position.x;
+            double dy = p.pose.position.y - last.pose.position.y;
+            double dist = sqrt(dx * dx + dy * dy);
+            if (dist >= min_dist)
+            {
+                simplified.push_back(p);
+                last = p;
+            }
+        }
+        return simplified;
+    }
     void planGlobalPath()
     {
         double res = map_.info.resolution;
@@ -141,7 +163,7 @@ public:
         worldToMap(goal_x_, goal_y_, gx, gy);
 
         ROS_WARN("Start position (meters): (%.3f, %.3f)  Goal position (meters): (%.3f, %.3f)",
-         robot_x_, robot_y_, goal_x_, goal_y_);
+                 robot_x_, robot_y_, goal_x_, goal_y_);
 
         std::priority_queue<Node *, std::vector<Node *>, CompareNode> open_list;
         std::vector<std::vector<bool>> closed(width, std::vector<bool>(height, false));
@@ -180,7 +202,7 @@ public:
                     continue;
 
                 int idx = ny * width + nx;
-                if ( map_.data[idx] > 50)
+                if (map_.data[idx] > 50)
                     continue;
                 if (!closed[nx][ny])
                 {
@@ -211,7 +233,7 @@ public:
 
             std::reverse(path_points.begin(), path_points.end());
             path_points = simplifyByTurning(path_points);
-            //path_points = simplifyPath(path_points, 0.3);
+            path_points = simplifyByDistance(path_points, 0.2);
 
             path_msg.poses = path_points;
             path_pub_.publish(path_msg);
@@ -247,7 +269,7 @@ private:
 
     double heuristic(int x1, int y1, int x2, int y2)
     {
-        return std::hypot(x1 - x2, y1 - y2); 
+        return std::hypot(x1 - x2, y1 - y2);
     }
 };
 
