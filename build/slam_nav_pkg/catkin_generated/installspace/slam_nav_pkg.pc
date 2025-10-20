@@ -1,0 +1,8 @@
+prefix=/home/coffee/catkin_ws4/install
+
+Name: slam_nav_pkg
+Description: Description of slam_nav_pkg
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

@@ -1,0 +1,2 @@
+slam_nav_pkg:tcp_receive_pkg
+-DCATKIN_DEVEL_PREFIX=/home/coffee/catkin_ws4/devel -DCMAKE_INSTALL_PREFIX=/home/coffee/catkin_ws4/install -G Unix Makefiles

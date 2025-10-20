@@ -1,0 +1,31 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/opt/ros/noetic/include/**",
+        "/home/coffee/catkin_ws2/src/atr_pkg/include/**",
+        "/home/coffee/catkin_ws2/src/imu_pkg/include/**",
+        "/home/coffee/catkin_ws2/src/lidar_pkg/include/**",
+        "/home/coffee/catkin_ws/src/my_lidar_pkg/include/**",
+        "/home/coffee/catkin_ws3/src/nav_pkg/include/**",
+        "/home/coffee/catkin_ws3/src/receivesensor_pkg/include/**",
+        "/home/coffee/catkin_ws3/src/sensorinput_pkg/include/**",
+        "/home/coffee/catkin_ws2/src/ssr_pkg/include/**",
+        "/home/coffee/catkin_ws4/src/tcp_receive_pkg/include/**",
+        "/home/coffee/catkin_ws2/src/vel_pkg/include/**",
+        "/home/coffee/catkin_ws2/src/wpr_simulation/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
