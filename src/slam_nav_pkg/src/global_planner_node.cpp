@@ -82,7 +82,7 @@ public:
 
     void stateCallback(const std_msgs::String::ConstPtr &msg)
     {
-        if (msg->data == "Plan" && has_map_ && has_robot_ && has_goal_ && replan)
+        if ((msg->data == "Plan"||msg->data == "Back") && has_map_ && has_robot_ && has_goal_ && replan)
         {
             ROS_WARN("Enter PLAN state -> start global planning...");
             planGlobalPath();
