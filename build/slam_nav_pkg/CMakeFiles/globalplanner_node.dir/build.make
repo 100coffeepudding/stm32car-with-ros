@@ -57,27 +57,27 @@ include slam_nav_pkg/CMakeFiles/globalplanner_node.dir/progress.make
 # Include the compile flags for this target's objects.
 include slam_nav_pkg/CMakeFiles/globalplanner_node.dir/flags.make
 
-slam_nav_pkg/CMakeFiles/globalplanner_node.dir/src/globalplanner.cpp.o: slam_nav_pkg/CMakeFiles/globalplanner_node.dir/flags.make
-slam_nav_pkg/CMakeFiles/globalplanner_node.dir/src/globalplanner.cpp.o: /home/coffee/catkin_ws4/src/slam_nav_pkg/src/globalplanner.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/coffee/catkin_ws4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object slam_nav_pkg/CMakeFiles/globalplanner_node.dir/src/globalplanner.cpp.o"
-	cd /home/coffee/catkin_ws4/build/slam_nav_pkg && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/globalplanner_node.dir/src/globalplanner.cpp.o -c /home/coffee/catkin_ws4/src/slam_nav_pkg/src/globalplanner.cpp
+slam_nav_pkg/CMakeFiles/globalplanner_node.dir/src/global_planner_node.cpp.o: slam_nav_pkg/CMakeFiles/globalplanner_node.dir/flags.make
+slam_nav_pkg/CMakeFiles/globalplanner_node.dir/src/global_planner_node.cpp.o: /home/coffee/catkin_ws4/src/slam_nav_pkg/src/global_planner_node.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/coffee/catkin_ws4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object slam_nav_pkg/CMakeFiles/globalplanner_node.dir/src/global_planner_node.cpp.o"
+	cd /home/coffee/catkin_ws4/build/slam_nav_pkg && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/globalplanner_node.dir/src/global_planner_node.cpp.o -c /home/coffee/catkin_ws4/src/slam_nav_pkg/src/global_planner_node.cpp
 
-slam_nav_pkg/CMakeFiles/globalplanner_node.dir/src/globalplanner.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/globalplanner_node.dir/src/globalplanner.cpp.i"
-	cd /home/coffee/catkin_ws4/build/slam_nav_pkg && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/coffee/catkin_ws4/src/slam_nav_pkg/src/globalplanner.cpp > CMakeFiles/globalplanner_node.dir/src/globalplanner.cpp.i
+slam_nav_pkg/CMakeFiles/globalplanner_node.dir/src/global_planner_node.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/globalplanner_node.dir/src/global_planner_node.cpp.i"
+	cd /home/coffee/catkin_ws4/build/slam_nav_pkg && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/coffee/catkin_ws4/src/slam_nav_pkg/src/global_planner_node.cpp > CMakeFiles/globalplanner_node.dir/src/global_planner_node.cpp.i
 
-slam_nav_pkg/CMakeFiles/globalplanner_node.dir/src/globalplanner.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/globalplanner_node.dir/src/globalplanner.cpp.s"
-	cd /home/coffee/catkin_ws4/build/slam_nav_pkg && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/coffee/catkin_ws4/src/slam_nav_pkg/src/globalplanner.cpp -o CMakeFiles/globalplanner_node.dir/src/globalplanner.cpp.s
+slam_nav_pkg/CMakeFiles/globalplanner_node.dir/src/global_planner_node.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/globalplanner_node.dir/src/global_planner_node.cpp.s"
+	cd /home/coffee/catkin_ws4/build/slam_nav_pkg && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/coffee/catkin_ws4/src/slam_nav_pkg/src/global_planner_node.cpp -o CMakeFiles/globalplanner_node.dir/src/global_planner_node.cpp.s
 
 # Object files for target globalplanner_node
 globalplanner_node_OBJECTS = \
-"CMakeFiles/globalplanner_node.dir/src/globalplanner.cpp.o"
+"CMakeFiles/globalplanner_node.dir/src/global_planner_node.cpp.o"
 
 # External object files for target globalplanner_node
 globalplanner_node_EXTERNAL_OBJECTS =
 
-/home/coffee/catkin_ws4/devel/lib/slam_nav_pkg/globalplanner_node: slam_nav_pkg/CMakeFiles/globalplanner_node.dir/src/globalplanner.cpp.o
+/home/coffee/catkin_ws4/devel/lib/slam_nav_pkg/globalplanner_node: slam_nav_pkg/CMakeFiles/globalplanner_node.dir/src/global_planner_node.cpp.o
 /home/coffee/catkin_ws4/devel/lib/slam_nav_pkg/globalplanner_node: slam_nav_pkg/CMakeFiles/globalplanner_node.dir/build.make
 /home/coffee/catkin_ws4/devel/lib/slam_nav_pkg/globalplanner_node: /opt/ros/noetic/lib/libcostmap_2d.so
 /home/coffee/catkin_ws4/devel/lib/slam_nav_pkg/globalplanner_node: /opt/ros/noetic/lib/liblayers.so

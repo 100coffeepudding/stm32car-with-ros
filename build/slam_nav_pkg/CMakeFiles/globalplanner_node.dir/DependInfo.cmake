@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/coffee/catkin_ws4/src/slam_nav_pkg/src/globalplanner.cpp" "/home/coffee/catkin_ws4/build/slam_nav_pkg/CMakeFiles/globalplanner_node.dir/src/globalplanner.cpp.o"
+  "/home/coffee/catkin_ws4/src/slam_nav_pkg/src/global_planner_node.cpp" "/home/coffee/catkin_ws4/build/slam_nav_pkg/CMakeFiles/globalplanner_node.dir/src/global_planner_node.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

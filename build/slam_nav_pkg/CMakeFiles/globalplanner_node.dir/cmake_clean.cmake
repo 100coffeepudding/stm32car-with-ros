@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "/home/coffee/catkin_ws4/devel/lib/slam_nav_pkg/globalplanner_node"
   "/home/coffee/catkin_ws4/devel/lib/slam_nav_pkg/globalplanner_node.pdb"
-  "CMakeFiles/globalplanner_node.dir/src/globalplanner.cpp.o"
+  "CMakeFiles/globalplanner_node.dir/src/global_planner_node.cpp.o"
 )
 
 # Per-language clean rules from dependency scanning.

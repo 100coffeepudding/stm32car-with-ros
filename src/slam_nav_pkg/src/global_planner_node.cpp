@@ -120,25 +120,6 @@ public:
         return simplified;
     }
 
-    std::vector<geometry_msgs::PoseStamped> simplifyPath(
-        const std::vector<geometry_msgs::PoseStamped> &path_points, double min_dist)
-    {
-        std::vector<geometry_msgs::PoseStamped> simplified;
-        if (path_points.empty())
-            return simplified;
-
-        simplified.push_back(path_points.front());
-        for (size_t i = 1; i < path_points.size(); ++i)
-        {
-            double dx = path_points[i].pose.position.x - simplified.back().pose.position.x;
-            double dy = path_points[i].pose.position.y - simplified.back().pose.position.y;
-            if (sqrt(dx * dx + dy * dy) >= min_dist)
-            {
-                simplified.push_back(path_points[i]);
-            }
-        }
-        return simplified;
-    }
 
     void planGlobalPath()
     {
@@ -159,7 +140,8 @@ public:
         worldToMap(robot_x_, robot_y_, sx, sy);
         worldToMap(goal_x_, goal_y_, gx, gy);
 
-        ROS_INFO("Start grid: (%d, %d)  Goal grid: (%d, %d)", sx, sy, gx, gy);
+        ROS_WARN("Start position (meters): (%.3f, %.3f)  Goal position (meters): (%.3f, %.3f)",
+         robot_x_, robot_y_, goal_x_, goal_y_);
 
         std::priority_queue<Node *, std::vector<Node *>, CompareNode> open_list;
         std::vector<std::vector<bool>> closed(width, std::vector<bool>(height, false));
@@ -198,9 +180,8 @@ public:
                     continue;
 
                 int idx = ny * width + nx;
-                if (map_.data[idx] > 50) // 避免障碍物
+                if ( map_.data[idx] > 50)
                     continue;
-
                 if (!closed[nx][ny])
                 {
                     double cost = (i < 4) ? 1.0 : 1.414;
@@ -266,7 +247,7 @@ private:
 
     double heuristic(int x1, int y1, int x2, int y2)
     {
-        return std::hypot(x1 - x2, y1 - y2); // 欧氏距离
+        return std::hypot(x1 - x2, y1 - y2); 
     }
 };
 

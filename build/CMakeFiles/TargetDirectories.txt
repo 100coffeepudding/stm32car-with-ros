@@ -97,7 +97,7 @@
 /home/coffee/catkin_ws4/build/slam_nav_pkg/CMakeFiles/rebuild_cache.dir
 /home/coffee/catkin_ws4/build/slam_nav_pkg/CMakeFiles/test.dir
 /home/coffee/catkin_ws4/build/slam_nav_pkg/CMakeFiles/global_costmap_node.dir
-/home/coffee/catkin_ws4/build/slam_nav_pkg/CMakeFiles/globalplanner_node.dir
+/home/coffee/catkin_ws4/build/slam_nav_pkg/CMakeFiles/global_planner_node.dir
 /home/coffee/catkin_ws4/build/slam_nav_pkg/CMakeFiles/edit_cache.dir
 /home/coffee/catkin_ws4/build/slam_nav_pkg/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir
 /home/coffee/catkin_ws4/build/slam_nav_pkg/CMakeFiles/map_msgs_generate_messages_cpp.dir

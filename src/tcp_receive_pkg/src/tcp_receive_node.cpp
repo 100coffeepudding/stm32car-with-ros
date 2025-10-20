@@ -101,7 +101,7 @@ void lidarThread()
         tf_msg.header.stamp = now;
         tf_msg.header.frame_id = "base_link";
         tf_msg.child_frame_id = "laser_link";
-        tf_msg.transform.translation.x = -0.15; 
+        tf_msg.transform.translation.x = 0.0; 
         tf_msg.transform.translation.y = 0.0;
         tf_msg.transform.translation.z = 0.10;                           // 高度
         tf_msg.transform.rotation = tf::createQuaternionMsgFromYaw(0.0); // 没旋转

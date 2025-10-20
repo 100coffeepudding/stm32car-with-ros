@@ -183,19 +183,19 @@ global_costmap_node/fast:
 .PHONY : global_costmap_node/fast
 
 # Convenience name for target.
-slam_nav_pkg/CMakeFiles/globalplanner_node.dir/rule:
-	cd /home/coffee/catkin_ws4/build && $(MAKE) -f CMakeFiles/Makefile2 slam_nav_pkg/CMakeFiles/globalplanner_node.dir/rule
-.PHONY : slam_nav_pkg/CMakeFiles/globalplanner_node.dir/rule
+slam_nav_pkg/CMakeFiles/global_planner_node.dir/rule:
+	cd /home/coffee/catkin_ws4/build && $(MAKE) -f CMakeFiles/Makefile2 slam_nav_pkg/CMakeFiles/global_planner_node.dir/rule
+.PHONY : slam_nav_pkg/CMakeFiles/global_planner_node.dir/rule
 
 # Convenience name for target.
-globalplanner_node: slam_nav_pkg/CMakeFiles/globalplanner_node.dir/rule
+global_planner_node: slam_nav_pkg/CMakeFiles/global_planner_node.dir/rule
 
-.PHONY : globalplanner_node
+.PHONY : global_planner_node
 
 # fast build rule for target.
-globalplanner_node/fast:
-	cd /home/coffee/catkin_ws4/build && $(MAKE) -f slam_nav_pkg/CMakeFiles/globalplanner_node.dir/build.make slam_nav_pkg/CMakeFiles/globalplanner_node.dir/build
-.PHONY : globalplanner_node/fast
+global_planner_node/fast:
+	cd /home/coffee/catkin_ws4/build && $(MAKE) -f slam_nav_pkg/CMakeFiles/global_planner_node.dir/build.make slam_nav_pkg/CMakeFiles/global_planner_node.dir/build
+.PHONY : global_planner_node/fast
 
 # Convenience name for target.
 slam_nav_pkg/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/rule:
@@ -728,32 +728,32 @@ src/global_costmap_node.cpp.s:
 	cd /home/coffee/catkin_ws4/build && $(MAKE) -f slam_nav_pkg/CMakeFiles/global_costmap_node.dir/build.make slam_nav_pkg/CMakeFiles/global_costmap_node.dir/src/global_costmap_node.cpp.s
 .PHONY : src/global_costmap_node.cpp.s
 
-src/globalplanner.o: src/globalplanner.cpp.o
+src/global_planner_node.o: src/global_planner_node.cpp.o
 
-.PHONY : src/globalplanner.o
+.PHONY : src/global_planner_node.o
 
 # target to build an object file
-src/globalplanner.cpp.o:
-	cd /home/coffee/catkin_ws4/build && $(MAKE) -f slam_nav_pkg/CMakeFiles/globalplanner_node.dir/build.make slam_nav_pkg/CMakeFiles/globalplanner_node.dir/src/globalplanner.cpp.o
-.PHONY : src/globalplanner.cpp.o
+src/global_planner_node.cpp.o:
+	cd /home/coffee/catkin_ws4/build && $(MAKE) -f slam_nav_pkg/CMakeFiles/global_planner_node.dir/build.make slam_nav_pkg/CMakeFiles/global_planner_node.dir/src/global_planner_node.cpp.o
+.PHONY : src/global_planner_node.cpp.o
 
-src/globalplanner.i: src/globalplanner.cpp.i
+src/global_planner_node.i: src/global_planner_node.cpp.i
 
-.PHONY : src/globalplanner.i
+.PHONY : src/global_planner_node.i
 
 # target to preprocess a source file
-src/globalplanner.cpp.i:
-	cd /home/coffee/catkin_ws4/build && $(MAKE) -f slam_nav_pkg/CMakeFiles/globalplanner_node.dir/build.make slam_nav_pkg/CMakeFiles/globalplanner_node.dir/src/globalplanner.cpp.i
-.PHONY : src/globalplanner.cpp.i
+src/global_planner_node.cpp.i:
+	cd /home/coffee/catkin_ws4/build && $(MAKE) -f slam_nav_pkg/CMakeFiles/global_planner_node.dir/build.make slam_nav_pkg/CMakeFiles/global_planner_node.dir/src/global_planner_node.cpp.i
+.PHONY : src/global_planner_node.cpp.i
 
-src/globalplanner.s: src/globalplanner.cpp.s
+src/global_planner_node.s: src/global_planner_node.cpp.s
 
-.PHONY : src/globalplanner.s
+.PHONY : src/global_planner_node.s
 
 # target to generate assembly for a file
-src/globalplanner.cpp.s:
-	cd /home/coffee/catkin_ws4/build && $(MAKE) -f slam_nav_pkg/CMakeFiles/globalplanner_node.dir/build.make slam_nav_pkg/CMakeFiles/globalplanner_node.dir/src/globalplanner.cpp.s
-.PHONY : src/globalplanner.cpp.s
+src/global_planner_node.cpp.s:
+	cd /home/coffee/catkin_ws4/build && $(MAKE) -f slam_nav_pkg/CMakeFiles/global_planner_node.dir/build.make slam_nav_pkg/CMakeFiles/global_planner_node.dir/src/global_planner_node.cpp.s
+.PHONY : src/global_planner_node.cpp.s
 
 src/local_costmap_node.o: src/local_costmap_node.cpp.o
 
@@ -792,7 +792,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... global_costmap_node"
-	@echo "... globalplanner_node"
+	@echo "... global_planner_node"
 	@echo "... edit_cache"
 	@echo "... dynamic_reconfigure_generate_messages_cpp"
 	@echo "... map_msgs_generate_messages_cpp"
@@ -836,9 +836,9 @@ help:
 	@echo "... src/global_costmap_node.o"
 	@echo "... src/global_costmap_node.i"
 	@echo "... src/global_costmap_node.s"
-	@echo "... src/globalplanner.o"
-	@echo "... src/globalplanner.i"
-	@echo "... src/globalplanner.s"
+	@echo "... src/global_planner_node.o"
+	@echo "... src/global_planner_node.i"
+	@echo "... src/global_planner_node.s"
 	@echo "... src/local_costmap_node.o"
 	@echo "... src/local_costmap_node.i"
 	@echo "... src/local_costmap_node.s"

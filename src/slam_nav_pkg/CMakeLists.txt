@@ -221,8 +221,8 @@ add_executable(fake_movebase_new_node src/fake_movebase_new_node.cpp)
    ${catkin_LIBRARIES}
  )
 
- add_executable(globalplanner_node src/globalplanner.cpp)
- target_link_libraries(globalplanner_node
+ add_executable(global_planner_node src/global_planner_node.cpp)
+ target_link_libraries(global_planner_node
    ${catkin_LIBRARIES}
  )
 

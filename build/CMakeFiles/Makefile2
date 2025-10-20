@@ -140,7 +140,7 @@ gtest/googletest/clean: gtest/googletest/CMakeFiles/gtest.dir/clean
 
 # Recursive "all" directory target.
 slam_nav_pkg/all: slam_nav_pkg/CMakeFiles/global_costmap_node.dir/all
-slam_nav_pkg/all: slam_nav_pkg/CMakeFiles/globalplanner_node.dir/all
+slam_nav_pkg/all: slam_nav_pkg/CMakeFiles/global_planner_node.dir/all
 slam_nav_pkg/all: slam_nav_pkg/CMakeFiles/fake_movebase_node.dir/all
 slam_nav_pkg/all: slam_nav_pkg/CMakeFiles/local_costmap_node.dir/all
 slam_nav_pkg/all: slam_nav_pkg/CMakeFiles/fake_movebase_new_node.dir/all
@@ -154,7 +154,7 @@ slam_nav_pkg/preinstall:
 
 # Recursive "clean" directory target.
 slam_nav_pkg/clean: slam_nav_pkg/CMakeFiles/global_costmap_node.dir/clean
-slam_nav_pkg/clean: slam_nav_pkg/CMakeFiles/globalplanner_node.dir/clean
+slam_nav_pkg/clean: slam_nav_pkg/CMakeFiles/global_planner_node.dir/clean
 slam_nav_pkg/clean: slam_nav_pkg/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/clean
 slam_nav_pkg/clean: slam_nav_pkg/CMakeFiles/map_msgs_generate_messages_cpp.dir/clean
 slam_nav_pkg/clean: slam_nav_pkg/CMakeFiles/costmap_2d_generate_messages_py.dir/clean
@@ -1905,31 +1905,31 @@ slam_nav_pkg/CMakeFiles/global_costmap_node.dir/clean:
 .PHONY : slam_nav_pkg/CMakeFiles/global_costmap_node.dir/clean
 
 #=============================================================================
-# Target rules for target slam_nav_pkg/CMakeFiles/globalplanner_node.dir
+# Target rules for target slam_nav_pkg/CMakeFiles/global_planner_node.dir
 
 # All Build rule for target.
-slam_nav_pkg/CMakeFiles/globalplanner_node.dir/all:
-	$(MAKE) -f slam_nav_pkg/CMakeFiles/globalplanner_node.dir/build.make slam_nav_pkg/CMakeFiles/globalplanner_node.dir/depend
-	$(MAKE) -f slam_nav_pkg/CMakeFiles/globalplanner_node.dir/build.make slam_nav_pkg/CMakeFiles/globalplanner_node.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/coffee/catkin_ws4/build/CMakeFiles --progress-num=7,8 "Built target globalplanner_node"
-.PHONY : slam_nav_pkg/CMakeFiles/globalplanner_node.dir/all
+slam_nav_pkg/CMakeFiles/global_planner_node.dir/all:
+	$(MAKE) -f slam_nav_pkg/CMakeFiles/global_planner_node.dir/build.make slam_nav_pkg/CMakeFiles/global_planner_node.dir/depend
+	$(MAKE) -f slam_nav_pkg/CMakeFiles/global_planner_node.dir/build.make slam_nav_pkg/CMakeFiles/global_planner_node.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/coffee/catkin_ws4/build/CMakeFiles --progress-num=7,8 "Built target global_planner_node"
+.PHONY : slam_nav_pkg/CMakeFiles/global_planner_node.dir/all
 
 # Build rule for subdir invocation for target.
-slam_nav_pkg/CMakeFiles/globalplanner_node.dir/rule: cmake_check_build_system
+slam_nav_pkg/CMakeFiles/global_planner_node.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/coffee/catkin_ws4/build/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 slam_nav_pkg/CMakeFiles/globalplanner_node.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 slam_nav_pkg/CMakeFiles/global_planner_node.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/coffee/catkin_ws4/build/CMakeFiles 0
-.PHONY : slam_nav_pkg/CMakeFiles/globalplanner_node.dir/rule
+.PHONY : slam_nav_pkg/CMakeFiles/global_planner_node.dir/rule
 
 # Convenience name for target.
-globalplanner_node: slam_nav_pkg/CMakeFiles/globalplanner_node.dir/rule
+global_planner_node: slam_nav_pkg/CMakeFiles/global_planner_node.dir/rule
 
-.PHONY : globalplanner_node
+.PHONY : global_planner_node
 
 # clean rule for target.
-slam_nav_pkg/CMakeFiles/globalplanner_node.dir/clean:
-	$(MAKE) -f slam_nav_pkg/CMakeFiles/globalplanner_node.dir/build.make slam_nav_pkg/CMakeFiles/globalplanner_node.dir/clean
-.PHONY : slam_nav_pkg/CMakeFiles/globalplanner_node.dir/clean
+slam_nav_pkg/CMakeFiles/global_planner_node.dir/clean:
+	$(MAKE) -f slam_nav_pkg/CMakeFiles/global_planner_node.dir/build.make slam_nav_pkg/CMakeFiles/global_planner_node.dir/clean
+.PHONY : slam_nav_pkg/CMakeFiles/global_planner_node.dir/clean
 
 #=============================================================================
 # Target rules for target slam_nav_pkg/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir

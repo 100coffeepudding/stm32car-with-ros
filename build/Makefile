@@ -961,17 +961,17 @@ global_costmap_node/fast:
 .PHONY : global_costmap_node/fast
 
 #=============================================================================
-# Target rules for targets named globalplanner_node
+# Target rules for targets named global_planner_node
 
 # Build rule for target.
-globalplanner_node: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 globalplanner_node
-.PHONY : globalplanner_node
+global_planner_node: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 global_planner_node
+.PHONY : global_planner_node
 
 # fast build rule for target.
-globalplanner_node/fast:
-	$(MAKE) -f slam_nav_pkg/CMakeFiles/globalplanner_node.dir/build.make slam_nav_pkg/CMakeFiles/globalplanner_node.dir/build
-.PHONY : globalplanner_node/fast
+global_planner_node/fast:
+	$(MAKE) -f slam_nav_pkg/CMakeFiles/global_planner_node.dir/build.make slam_nav_pkg/CMakeFiles/global_planner_node.dir/build
+.PHONY : global_planner_node/fast
 
 #=============================================================================
 # Target rules for targets named dynamic_reconfigure_generate_messages_cpp
@@ -1437,7 +1437,7 @@ help:
 	@echo "... actionlib_msgs_generate_messages_py"
 	@echo "... rosgraph_msgs_generate_messages_nodejs"
 	@echo "... global_costmap_node"
-	@echo "... globalplanner_node"
+	@echo "... global_planner_node"
 	@echo "... dynamic_reconfigure_generate_messages_cpp"
 	@echo "... map_msgs_generate_messages_cpp"
 	@echo "... costmap_2d_generate_messages_py"

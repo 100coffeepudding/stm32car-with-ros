@@ -9,14 +9,14 @@ public:
     SimpleCostmapNode()
     {
         ros::NodeHandle nh("~");
-
+        
         // 参数
-        nh.param("inflation_radius_m", inflation_radius_m_, 0.2);  // 膨胀半径（米）
+        nh.param("inflation_radius_m", inflation_radius_m_, 0.2); // 膨胀半径（米）
         nh.param("map_topic", map_topic_, std::string("/map"));
         nh.param("costmap_topic", costmap_topic_, std::string("/global_costmap"));
-        nh.param("threshold", threshold_, 50);  // map 中障碍阈值
-        nh.param("max_cost", max_cost_, 100);   // 最大代价值
-        nh.param("min_cost", min_cost_, 1);     // 最小代价值
+        nh.param("threshold", threshold_, 50); // map 中障碍阈值
+        nh.param("max_cost", max_cost_, 100);  // 最大代价值
+        nh.param("min_cost", min_cost_, 1);    // 最小代价值
 
         // 订阅 map
         map_sub_ = nh.subscribe(map_topic_, 1, &SimpleCostmapNode::mapCallback, this);
@@ -25,12 +25,12 @@ public:
         costmap_pub_ = nh.advertise<nav_msgs::OccupancyGrid>(costmap_topic_, 1, true);
     }
 
-    void mapCallback(const nav_msgs::OccupancyGrid::ConstPtr& map_msg)
+    void mapCallback(const nav_msgs::OccupancyGrid::ConstPtr &map_msg)
     {
         nav_msgs::OccupancyGrid costmap;
         costmap.header = map_msg->header;
         costmap.info = map_msg->info;
-        costmap.data.resize(map_msg->data.size(), 0);
+        costmap.data.resize(map_msg->data.size());
 
         int width = map_msg->info.width;
         int height = map_msg->info.height;
@@ -45,12 +45,12 @@ public:
             int val = map_msg->data[i];
             if (val >= threshold_)
             {
-                costmap.data[i] = max_cost_;  // 原始障碍
+                costmap.data[i] = max_cost_; // 原始障碍
                 obstacle_indices.push_back(i);
             }
-            else if(val==-1)
+            else if (val == -1)
             {
-                costmap.data[i]=-1;
+                costmap.data[i] = -1;
             }
             else
             {
@@ -72,15 +72,19 @@ public:
                     int ny = y + dy;
                     if (nx >= 0 && nx < width && ny >= 0 && ny < height)
                     {
-                        double dist = std::sqrt(dx*dx + dy*dy) * res;
+                        int nidx = ny * width + nx;
+                        if (costmap.data[nidx] == -1)
+                            continue;
+                        double dist = std::sqrt(dx * dx + dy * dy) * res;
                         if (dist <= inflation_radius_m_)
                         {
-                            int nidx = ny * width + nx;
                             int cost = static_cast<int>(
                                 max_cost_ * (1.0 - dist / inflation_radius_m_));
-                            if (cost < min_cost_) cost = min_cost_;
+                            if (cost < min_cost_)
+                                cost = min_cost_;
                             // 取最大的代价值，避免被覆盖
-                            if (cost > costmap.data[nidx]) costmap.data[nidx] = cost;
+                            if (cost > costmap.data[nidx])
+                                costmap.data[nidx] = cost;
                         }
                     }
                 }
@@ -102,9 +106,9 @@ private:
     std::string costmap_topic_;
 };
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "costmap_node");
+    ros::init(argc, argv, "global_costmap_node");
     SimpleCostmapNode node;
     ros::spin();
     return 0;

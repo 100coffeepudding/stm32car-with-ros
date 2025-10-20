@@ -1,5 +1,5 @@
 <launch>
-<node pkg="slam_nav_pkg" type="costmap_node" name="costmap_node" output="screen">
+<node pkg="slam_nav_pkg" type="global_costmap_node" name="global_costmap_node" output="screen">
     <param name="inflation_radius_m" value="0.1"/>
     <param name="map_topic" value="/map"/>
     <param name="costmap_topic" value="/global_costmap"/>
