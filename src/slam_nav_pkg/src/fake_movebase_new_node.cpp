@@ -135,6 +135,17 @@ bool isPathClear(double x0, double y0, double x1, double y1)
     return true;
 }
 
+bool mutiplePathClear(double x0, double y0, double x1, double y1)
+{
+
+    bool test1 = isPathClear(x0, y0, x1, y1);
+    bool test2 = isPathClear(x0 + 0.15, y0 + 0.15, x1, y1);
+    bool test3 = isPathClear(x0 - 0.15, y0 - 0.15, x1, y1);
+    bool test4 = isPathClear(x0 + 0.15, y0 - 0.15, x1, y1);
+    bool test5 = isPathClear(x0 - 0.15, y0 + 0.15, x1, y1);
+    return test1 & test2 & test3 & test4 & test5;
+}
+
 // FakeMoveBase类
 class FakeMoveBase
 {
@@ -145,8 +156,8 @@ public:
     {
         as_.start();
         ROS_INFO("FakeMoveBase server started");
-        exit_x_ = 20;
-        exit_y_ = -20.0;
+        exit_x_ = 2.2;
+        exit_y_ = -2.2;
         exit_tolerance_ = 0.5;
         current_state_ = Search;
         state_pub_ = nh_.advertise<std_msgs::String>("/robot_state", 10);
@@ -175,6 +186,12 @@ public:
             listener.transformPoint("base_link", goal_map_msg, goal_robot_msg);
             dx = goal_robot_msg.point.x;
             dy = goal_robot_msg.point.y;
+            if (!std::isfinite(dx) || !std::isfinite(dy) ||
+                fabs(dx) > 1e3 || fabs(dy) > 1e3)
+            {
+                ROS_ERROR("Invalid transform result: dx=%.2f, dy=%.2f", dx, dy);
+                return false;
+            }
             return true;
         }
         catch (tf::TransformException &ex)
@@ -185,7 +202,7 @@ public:
     }
 
     // 检测前方是否有障碍
-    bool checkFrontObstacle(double forward_m = 0.25, double width_m = 0.20, int cost_threshold = 50)
+    bool checkFrontObstacle(double forward_m = 0.1, double width_m = 0.1, int cost_threshold = 50)
     {
         if (current_localmap.data.empty())
         {
@@ -262,7 +279,7 @@ public:
         send(sock_cmd, cmd, strlen(cmd), 0);
         sprintf(cmd, "B00");
         send(sock_cmd, cmd, strlen(cmd), 0);
-        sleep(0.6);
+        sleep(1.2);
         sprintf(cmd, "S00");
         send(sock_cmd, cmd, strlen(cmd), 0);
         ROS_WARN("Emergency stop due to obstacle!");
@@ -283,7 +300,7 @@ public:
         {
             Ltest += latest_scan_.ranges[i];
         }
-        if (Rtest / 20 > 0.5)
+        if (Rtest / 20 > 0.5 && Rtest / 20 > Ltest / 20)
         {
             sprintf(cmd, "R50");
             ROS_INFO(cmd);
@@ -320,7 +337,7 @@ public:
         double angle_degree = angle_rad / M_PI * 180;
         char cmd[3];
 
-        if (angle_degree > 10)
+        if (angle_degree > 20)
         {
             sprintf(cmd, "S00");
             send(sock_cmd, cmd, strlen(cmd), 0);
@@ -343,7 +360,7 @@ public:
                 sleep(1);
             }
         }
-        else if (angle_degree < -10)
+        else if (angle_degree < -20)
         {
             sprintf(cmd, "S00");
             send(sock_cmd, cmd, strlen(cmd), 0);
@@ -380,24 +397,43 @@ public:
         if (!mapGoalToRobotFrame(goal_point_map, dx, dy))
         {
             ROS_WARN("Failed to transform goal to robot frame, aborting");
-            as_.setAborted();
             return false;
         }
         ROS_INFO("Goal in robot frame: dx=%.2f, dy=%.2f", dx, dy);
         double distance = sqrt(dx * dx + dy * dy);
+        double angle_rad = atan2(dy, dx);
+        double angle_degree = angle_rad / M_PI * 180;
         char cmd[3];
         ros::Rate rate(5);
         int testcount = 0;
+        turn_control(dx, dy);
+        ros::Duration timeout(2.0);
+        ros::Time start = ros::Time::now();
+        while ((ros::Time::now() - start) < timeout)
+        {
+            ros::spinOnce();            // 让回调执行
+            ros::Duration(0.1).sleep(); // 防止占用CPU
+        }
+        if (distance > tolerance)
+        {
+            sprintf(cmd, "F00");
+            ROS_INFO(cmd);
+            send(sock_cmd, cmd, strlen(cmd), 0);
+        }
         while (distance > tolerance && ros::ok())
         {
             mapGoalToRobotFrame(goal_point_map, dx, dy);
             distance = sqrt(dx * dx + dy * dy);
-            double angle_rad = atan2(dy, dx);
-            double angle_degree = angle_rad / M_PI * 180;
-            turn_control(dx, dy);
+            angle_rad = atan2(dy, dx);
+            angle_degree = angle_rad / M_PI * 180;
+            if (angle_degree > 30)
+            {
+                turn_control(dx, dy);
+            }
             sprintf(cmd, "F00");
             ROS_INFO(cmd);
             send(sock_cmd, cmd, strlen(cmd), 0);
+
             ROS_WARN("ischeck %d", checkFrontObstacle());
             if (checkFrontObstacle())
             {
@@ -424,7 +460,7 @@ public:
         ROS_INFO("Received goal: (%.2f, %.2f, %.2f)", x, y, yaw);
         if (current_state_ != Back)
         {
-            if (isPathClear(robot_x_map, robot_y_map, x, y))
+            if (mutiplePathClear(robot_x_map, robot_y_map, x, y))
             {
                 current_state_ = Search;
             }
@@ -441,7 +477,7 @@ public:
             msg.data = "SEARCH";
             state_pub_.publish(msg);
 
-            if (isPathClear(robot_x_map, robot_y_map, exit_x_, exit_y_))
+            if (mutiplePathClear(robot_x_map, robot_y_map, exit_x_, exit_y_))
             {
                 ROS_WARN("Direct path to exit detected! Navigating directly to exit...");
                 bool issucceed = MovetoGoal(exit_x_, exit_y_, exit_tolerance_);
@@ -529,9 +565,21 @@ public:
             msg1.data = "Plan";
             state_pub_.publish(msg1);
 
+            ros::Time start = ros::Time::now();
+            ros::Duration timeout(3.0); // 最多等3秒
+            while ((ros::Time::now() - start) < timeout)
+            {
+                ros::spinOnce(); // 让回调执行
+                if (path_received)
+                    break;
+                ros::Duration(0.1).sleep(); // 防止占用CPU
+            }
+
+            ROS_WARN("path receive: %d", path_received);
+
             if (!path_received)
             {
-                ROS_ERROR(" marking goal is unreachable.");
+                ROS_ERROR(" marking goal is unreachable. here");
                 as_.setAborted();
                 return;
             }
@@ -541,7 +589,7 @@ public:
                 char cmd[3];
                 for (auto &v : path_points)
                 {
-                    if (isPathClear(robot_x_map, robot_y_map, exit_x_, exit_y_))
+                    if (mutiplePathClear(robot_x_map, robot_y_map, exit_x_, exit_y_))
                     {
                         ROS_WARN("Direct path to exit detected! Navigating directly to exit...");
                         bool issucceed = MovetoGoal(exit_x_, exit_y_, exit_tolerance_);
@@ -582,7 +630,7 @@ public:
                             return;
                         }
                     }
-                    bool success = MovetoGoal(v.first, v.second, 0.15);
+                    bool success = MovetoGoal(v.first, v.second, 0.2);
                     if (success)
                     {
                         sprintf(cmd, "S00");
@@ -600,6 +648,7 @@ public:
                 }
                 ROS_WARN("Path done");
                 path_points.clear();
+                path_received = false;
             }
             double dx = robot_x_map - x;
             double dy = robot_y_map - y;
@@ -726,29 +775,7 @@ private:
 
         ROS_WARN("ischeck %d", checkFrontObstacle());
 
-        // executeCB(boost::make_shared<move_base_msgs::MoveBaseGoal>(goal));
-
-        std_msgs::String replan;
-        replan.data = "Replan";
-        replan_pub.publish(replan);
-
-        geometry_msgs::Point goal_point_map;
-        goal_point_map.x = x;
-        goal_point_map.y = y;
-        goal_point_map.z = 0.0;
-        goal_pub.publish(goal_point_map);
-
-        geometry_msgs::Point robot_point_map;
-        robot_point_map.x = robot_x_map;
-        robot_point_map.y = robot_y_map;
-        robot_point_map.z = 0.0;
-        robot_pub.publish(robot_point_map);
-
-        ros::Duration(0.5).sleep();
-        ROS_INFO("State: Plan");
-        std_msgs::String msg1;
-        msg1.data = "Plan";
-        state_pub_.publish(msg1);
+        executeCB(boost::make_shared<move_base_msgs::MoveBaseGoal>(goal));
     }
 
     void pathPointCallback(const nav_msgs::Path::ConstPtr &msg)
@@ -777,7 +804,7 @@ private:
             char cmd[3];
             for (auto &v : path_back)
             {
-                if (isPathClear(robot_x_map, robot_y_map, 0, 0))
+                if (mutiplePathClear(robot_x_map, robot_y_map, 0, 0))
                 {
                     ROS_WARN("Direct path to exit detected! Navigating directly to exit...");
                     bool issucceed = MovetoGoal(0, 0, 0.5);
@@ -832,6 +859,9 @@ private:
             if (dis < 0.5)
             {
                 ROS_WARN("Return");
+                sprintf(cmd, "S00");
+                ROS_INFO(cmd);
+                send(sock_cmd, cmd, strlen(cmd), 0);
             }
             else
             {

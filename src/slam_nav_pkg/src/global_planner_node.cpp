@@ -44,7 +44,7 @@ public:
         path_pub_ = nh_.advertise<nav_msgs::Path>("/planned_path", 1);
 
         // 发布路径规划完成标志
-        finish_pub_ = nh_.advertise<std_msgs::String>("/planned_path_done", 1);
+        finish_pub_ = nh_.advertise<std_msgs::String>("/planned_path_done", 10);
 
         has_map_ = false;
         has_robot_ = false;
@@ -202,7 +202,7 @@ public:
                     continue;
 
                 int idx = ny * width + nx;
-                if (map_.data[idx] > 50)
+                if (map_.data[idx] > 35)
                     continue;
                 if (!closed[nx][ny])
                 {

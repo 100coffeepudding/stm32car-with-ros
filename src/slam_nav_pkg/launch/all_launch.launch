@@ -9,16 +9,16 @@
     <param name="map_frame" value="map"/>
 
     <param name="particles" value="30"/>
-    <param name="delta" value="0.05"/>
+    <param name="delta" value="0.02"/>
     <param name="linearUpdate" value="0.02"/>      <!-- 移动 2cm 更新地图 -->
     <param name="angularUpdate" value="0.1"/>     <!-- 转角 0.05 rad (~2.8°) 更新地图 -->
-    <param name="temporalUpdate" value="1.0"/>     <!-- 最多每秒更新一次地图 -->
+    <param name="temporalUpdate" value="0.5"/>     <!-- 最多每秒更新一次地图 -->
 
-    <param name="sigma" value="0.05"/>            <!-- 激光匹配噪声 -->
+    <param name="sigma" value="0.07"/>            <!-- 激光匹配噪声 -->
     <param name="lsigma" value="0.075"/>
     <param name="kernelSize" value="1"/>
-    <param name="maxUrange" value="6.0"/>          <!-- 激光最大有效距离 -->
-    <param name="maxRange" value="8.0"/>
+    <param name="maxUrange" value="5"/>          <!-- 激光最大有效距离 -->
+    <param name="maxRange" value="5.5"/>
 
     <param name="xmin" value="-10.0"/>
     <param name="ymin" value="-10.0"/>
