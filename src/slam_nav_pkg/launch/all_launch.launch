@@ -49,7 +49,7 @@
 
 
     <node pkg="slam_nav_pkg" type="global_costmap_node" name="global_costmap_node" >
-    <param name="inflation_radius_m" value="0.2"/>
+    <param name="inflation_radius_m" value="0.27"/>
     <param name="map_topic" value="/map"/>
     <param name="costmap_topic" value="/global_costmap"/>
     <param name="threshold" value="50"/>
@@ -63,7 +63,7 @@
     <param name="costmap_topic" value="/local_costmap"/>
     <param name="radius_m" value="2.0"/>
     <param name="resolution" value="0.05"/>
-    <param name="inflation_radius" value="0.1"/>
+    <param name="inflation_radius" value="0.14"/>
     </node>
 
     <node pkg="slam_nav_pkg" type="global_planner_node" name="global_planner" output="screen"/>

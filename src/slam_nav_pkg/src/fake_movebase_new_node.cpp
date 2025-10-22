@@ -139,10 +139,10 @@ bool mutiplePathClear(double x0, double y0, double x1, double y1)
 {
 
     bool test1 = isPathClear(x0, y0, x1, y1);
-    bool test2 = isPathClear(x0 + 0.15, y0 + 0.15, x1, y1);
-    bool test3 = isPathClear(x0 - 0.15, y0 - 0.15, x1, y1);
-    bool test4 = isPathClear(x0 + 0.15, y0 - 0.15, x1, y1);
-    bool test5 = isPathClear(x0 - 0.15, y0 + 0.15, x1, y1);
+    bool test2 = isPathClear(x0 + 0.1, y0 + 0.1, x1, y1);
+    bool test3 = isPathClear(x0 - 0.1, y0 - 0.1, x1, y1);
+    bool test4 = isPathClear(x0 + 0.1, y0 - 0.1, x1, y1);
+    bool test5 = isPathClear(x0 - 0.1, y0 + 0.1, x1, y1);
     return test1 & test2 & test3 & test4 & test5;
 }
 
@@ -308,7 +308,7 @@ public:
             sleep(1);
             sprintf(cmd, "F00");
             send(sock_cmd, cmd, strlen(cmd), 0);
-            sleep(1);
+            sleep(1.2);
             sprintf(cmd, "S00");
             send(sock_cmd, cmd, strlen(cmd), 0);
         }
@@ -320,7 +320,7 @@ public:
             sleep(1);
             sprintf(cmd, "F00");
             send(sock_cmd, cmd, strlen(cmd), 0);
-            sleep(1);
+            sleep(1.2);
             sprintf(cmd, "S00");
             send(sock_cmd, cmd, strlen(cmd), 0);
         }
@@ -343,7 +343,7 @@ public:
             send(sock_cmd, cmd, strlen(cmd), 0);
             if (angle_degree < 90)
             {
-                sprintf(cmd, "L%02.0f", angle_degree);
+                sprintf(cmd, "L%02.0f", angle_degree + 10);
                 ROS_INFO(cmd);
                 send(sock_cmd, cmd, strlen(cmd), 0);
                 sleep(1);
@@ -366,7 +366,7 @@ public:
             send(sock_cmd, cmd, strlen(cmd), 0);
             if (angle_degree > -90)
             {
-                sprintf(cmd, "R%02.0f", -angle_degree);
+                sprintf(cmd, "R%02.0f", -angle_degree - 10);
                 ROS_INFO(cmd);
                 send(sock_cmd, cmd, strlen(cmd), 0);
                 sleep(1);
@@ -441,6 +441,8 @@ public:
                 local_planner();
                 if (testcount > 2)
                 {
+                    sprintf(cmd, "S00");
+                    send(sock_cmd, cmd, strlen(cmd), 0);
                     ROS_ERROR("Local planner stuck, marking goal as unreachable.");
                     return false;
                 }
@@ -448,6 +450,8 @@ public:
             ros::spinOnce();
             rate.sleep();
         }
+        sprintf(cmd, "S00");
+        send(sock_cmd, cmd, strlen(cmd), 0);
         return true;
     }
 
@@ -655,8 +659,17 @@ public:
             if (!path_points.empty())
             {
                 char cmd[3];
+                int wrongtime = 0;
                 for (auto &v : path_points)
                 {
+                    if (wrongtime > 8)
+                    {
+                        char cmd[3];
+                        sprintf(cmd, "S00");
+                        send(sock_cmd, cmd, strlen(cmd), 0);
+                        as_.setAborted();
+                        return;
+                    }
                     if (mutiplePathClear(robot_x_map, robot_y_map, exit_x_, exit_y_))
                     {
                         ROS_WARN("Direct path to exit detected! Navigating directly to exit...");
@@ -705,6 +718,7 @@ public:
                         ROS_INFO(cmd);
                         send(sock_cmd, cmd, strlen(cmd), 0);
                         ROS_WARN("success");
+                        wrongtime = 0;
                     }
                     else
                     {
@@ -712,6 +726,7 @@ public:
                         ROS_INFO(cmd);
                         send(sock_cmd, cmd, strlen(cmd), 0);
                         ROS_WARN("fail to reach,go to next");
+                        wrongtime++;
                     }
                 }
                 ROS_WARN("Path done");
@@ -850,6 +865,31 @@ private:
         ROS_INFO("State: Back");
         std_msgs::String msg1;
         msg1.data = "Back";
+        state_pub_.publish(msg1);
+    }
+
+    void replan(double x, double y)
+    {
+        std_msgs::String replan;
+        replan.data = "Replan";
+        replan_pub.publish(replan);
+
+        geometry_msgs::Point goal_point_map;
+        goal_point_map.x = x;
+        goal_point_map.y = y;
+        goal_point_map.z = 0.0;
+        goal_pub.publish(goal_point_map);
+
+        geometry_msgs::Point robot_point_map;
+        robot_point_map.x = robot_x_map;
+        robot_point_map.y = robot_y_map;
+        robot_point_map.z = 0.0;
+        robot_pub.publish(robot_point_map);
+
+        ros::Duration(0.5).sleep();
+        ROS_INFO("State: Plan");
+        std_msgs::String msg1;
+        msg1.data = "Plan";
         state_pub_.publish(msg1);
     }
 

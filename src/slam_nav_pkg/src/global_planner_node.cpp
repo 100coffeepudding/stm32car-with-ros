@@ -233,7 +233,7 @@ public:
 
             std::reverse(path_points.begin(), path_points.end());
             path_points = simplifyByTurning(path_points);
-            path_points = simplifyByDistance(path_points, 0.2);
+            //path_points = simplifyByDistance(path_points, 0.2);
 
             path_msg.poses = path_points;
             path_pub_.publish(path_msg);
