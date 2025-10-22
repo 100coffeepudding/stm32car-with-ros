@@ -407,7 +407,7 @@ public:
         ros::Rate rate(5);
         int testcount = 0;
         turn_control(dx, dy);
-        ros::Duration timeout(2.0);
+        ros::Duration timeout(1.0);
         ros::Time start = ros::Time::now();
         while ((ros::Time::now() - start) < timeout)
         {
@@ -450,12 +450,80 @@ public:
         }
         return true;
     }
+
+    geometry_msgs::Point findInnerFreePoint(const nav_msgs::OccupancyGrid &map,
+                                            const geometry_msgs::Point &frontier)
+    {
+        int map_width = map.info.width;
+        int map_height = map.info.height;
+        double res = map.info.resolution;
+
+        int fx = (frontier.x - map.info.origin.position.x) / res;
+        int fy = (frontier.y - map.info.origin.position.y) / res;
+
+        // 八方向搜索，往内退
+        std::vector<std::pair<int, int>> dirs = {
+            {1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1}};
+
+        int best_nx = fx;
+        int best_ny = fy;
+        bool found = false;
+
+        for (auto &d : dirs)
+        {
+            int free_count = 0;
+            for (int i = 1; i <= 8; ++i) // 最多向内看 8 格
+            {
+                int nx = fx + d.first * i;
+                int ny = fy + d.second * i;
+                if (nx < 0 || ny < 0 || nx >= map_width || ny >= map_height)
+                    continue;
+
+                int idx = ny * map_width + nx;
+                if (map.data[idx] == 0)
+                {
+                    free_count++;
+
+                    // 找到连续3个 free cell（表示足够往内退）
+                    if (free_count >= 3)
+                    {
+                        best_nx = nx;
+                        best_ny = ny;
+                        found = true;
+                        break;
+                    }
+                }
+                else
+                {
+                    free_count = 0; // 一旦中断，重新计数
+                }
+            }
+
+            if (found)
+                break;
+        }
+
+        geometry_msgs::Point result;
+        result.x = map.info.origin.position.x + best_nx * res;
+        result.y = map.info.origin.position.y + best_ny * res;
+        return result;
+    }
+
     // 核心控制
     void executeCB(const move_base_msgs::MoveBaseGoalConstPtr &goal)
     {
         double x = goal->target_pose.pose.position.x;
         double y = goal->target_pose.pose.position.y;
         double yaw = tf::getYaw(goal->target_pose.pose.orientation);
+
+        geometry_msgs::Point target_goal;
+        target_goal.x = x;
+        target_goal.y = y;
+        target_goal.z = 0.0;
+
+        geometry_msgs::Point frontier = findInnerFreePoint(current_map_, target_goal);
+        x = frontier.x;
+        y = frontier.y;
 
         ROS_INFO("Received goal: (%.2f, %.2f, %.2f)", x, y, yaw);
         if (current_state_ != Back)
@@ -760,6 +828,31 @@ private:
         localmap_received = true;
     }
 
+    void replanback()
+    {
+        std_msgs::String replan;
+        replan.data = "Replan";
+        replan_pub.publish(replan);
+
+        geometry_msgs::Point goal_point_map;
+        goal_point_map.x = 0.0;
+        goal_point_map.y = 0.0;
+        goal_point_map.z = 0.0;
+        goal_pub.publish(goal_point_map);
+
+        geometry_msgs::Point robot_point_map;
+        robot_point_map.x = robot_x_map;
+        robot_point_map.y = robot_y_map;
+        robot_point_map.z = 0.0;
+        robot_pub.publish(robot_point_map);
+
+        ros::Duration(0.5).sleep();
+        ROS_INFO("State: Back");
+        std_msgs::String msg1;
+        msg1.data = "Back";
+        state_pub_.publish(msg1);
+    }
+
     void testCallback(const geometry_msgs::PoseStamped::ConstPtr &msg)
     {
         double x = msg->pose.position.x;
@@ -802,8 +895,19 @@ private:
                 }
             }
             char cmd[3];
+            int wrongtime = 0;
             for (auto &v : path_back)
             {
+                if (wrongtime > 5)
+                {
+                    ROS_WARN("stop this path");
+
+                    sprintf(cmd, "S00");
+                    ROS_INFO(cmd);
+                    send(sock_cmd, cmd, strlen(cmd), 0);
+                    replanback();
+                    return;
+                }
                 if (mutiplePathClear(robot_x_map, robot_y_map, 0, 0))
                 {
                     ROS_WARN("Direct path to exit detected! Navigating directly to exit...");
@@ -811,31 +915,18 @@ private:
                     if (issucceed)
                     {
                         ROS_WARN("Return");
+                        sprintf(cmd, "S00");
+                        ROS_INFO(cmd);
+                        send(sock_cmd, cmd, strlen(cmd), 0);
                         return;
                     }
                     else
                     {
-                        std_msgs::String replan;
-                        replan.data = "Replan";
-                        replan_pub.publish(replan);
-
-                        geometry_msgs::Point goal_point_map;
-                        goal_point_map.x = 0.0;
-                        goal_point_map.y = 0.0;
-                        goal_point_map.z = 0.0;
-                        goal_pub.publish(goal_point_map);
-
-                        geometry_msgs::Point robot_point_map;
-                        robot_point_map.x = robot_x_map;
-                        robot_point_map.y = robot_y_map;
-                        robot_point_map.z = 0.0;
-                        robot_pub.publish(robot_point_map);
-
-                        ros::Duration(0.5).sleep();
-                        ROS_INFO("State: Back");
-                        std_msgs::String msg1;
-                        msg1.data = "Back";
-                        state_pub_.publish(msg1);
+                        sprintf(cmd, "S00");
+                        ROS_INFO(cmd);
+                        send(sock_cmd, cmd, strlen(cmd), 0);
+                        replanback();
+                        return;
                     }
                 }
                 bool success = MovetoGoal(v.first, v.second, 0.15);
@@ -845,6 +936,7 @@ private:
                     ROS_INFO(cmd);
                     send(sock_cmd, cmd, strlen(cmd), 0);
                     ROS_WARN("success");
+                    wrongtime = 0;
                 }
                 else
                 {
@@ -852,6 +944,7 @@ private:
                     ROS_INFO(cmd);
                     send(sock_cmd, cmd, strlen(cmd), 0);
                     ROS_WARN("fail to reach,go to next");
+                    wrongtime++;
                 }
             }
             ROS_WARN("Path done");
@@ -865,27 +958,10 @@ private:
             }
             else
             {
-                std_msgs::String replan;
-                replan.data = "Replan";
-                replan_pub.publish(replan);
-
-                geometry_msgs::Point goal_point_map;
-                goal_point_map.x = 0.0;
-                goal_point_map.y = 0.0;
-                goal_point_map.z = 0.0;
-                goal_pub.publish(goal_point_map);
-
-                geometry_msgs::Point robot_point_map;
-                robot_point_map.x = robot_x_map;
-                robot_point_map.y = robot_y_map;
-                robot_point_map.z = 0.0;
-                robot_pub.publish(robot_point_map);
-
-                ros::Duration(0.5).sleep();
-                ROS_INFO("State: Back");
-                std_msgs::String msg1;
-                msg1.data = "Back";
-                state_pub_.publish(msg1);
+                sprintf(cmd, "S00");
+                ROS_INFO(cmd);
+                send(sock_cmd, cmd, strlen(cmd), 0);
+                replanback();
             }
         }
     }

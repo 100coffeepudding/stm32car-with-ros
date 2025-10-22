@@ -202,7 +202,7 @@ public:
                     continue;
 
                 int idx = ny * width + nx;
-                if (map_.data[idx] > 35)
+                if (map_.data[idx] > 50)
                     continue;
                 if (!closed[nx][ny])
                 {
