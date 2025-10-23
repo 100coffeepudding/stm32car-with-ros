@@ -343,7 +343,7 @@ public:
             send(sock_cmd, cmd, strlen(cmd), 0);
             if (angle_degree < 90)
             {
-                sprintf(cmd, "L%02.0f", angle_degree + 10);
+                sprintf(cmd, "L%02.0f", angle_degree);
                 ROS_INFO(cmd);
                 send(sock_cmd, cmd, strlen(cmd), 0);
                 sleep(1);
@@ -366,7 +366,7 @@ public:
             send(sock_cmd, cmd, strlen(cmd), 0);
             if (angle_degree > -90)
             {
-                sprintf(cmd, "R%02.0f", -angle_degree - 10);
+                sprintf(cmd, "R%02.0f", -angle_degree);
                 ROS_INFO(cmd);
                 send(sock_cmd, cmd, strlen(cmd), 0);
                 sleep(1);
@@ -465,7 +465,6 @@ public:
         int fx = (frontier.x - map.info.origin.position.x) / res;
         int fy = (frontier.y - map.info.origin.position.y) / res;
 
-        // 八方向搜索，往内退
         std::vector<std::pair<int, int>> dirs = {
             {1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1}};
 
@@ -476,7 +475,7 @@ public:
         for (auto &d : dirs)
         {
             int free_count = 0;
-            for (int i = 1; i <= 8; ++i) // 最多向内看 8 格
+            for (int i = 1; i <= 8; ++i) 
             {
                 int nx = fx + d.first * i;
                 int ny = fy + d.second * i;
@@ -488,7 +487,6 @@ public:
                 {
                     free_count++;
 
-                    // 找到连续3个 free cell（表示足够往内退）
                     if (free_count >= 3)
                     {
                         best_nx = nx;
@@ -499,7 +497,7 @@ public:
                 }
                 else
                 {
-                    free_count = 0; // 一旦中断，重新计数
+                    free_count = 0; 
                 }
             }
 
@@ -820,9 +818,9 @@ private:
         return dist < exit_tolerance_;
     }
 
-    CarState current_state_; // 记录状态，SEARCH/BACK
+    CarState current_state_; 
 
-    sensor_msgs::LaserScan latest_scan_; // 雷达消息包
+    sensor_msgs::LaserScan latest_scan_; 
     bool scan_received_ = false;
 
     void mapCallback(const nav_msgs::OccupancyGrid::ConstPtr &msg) // 地图回调函数

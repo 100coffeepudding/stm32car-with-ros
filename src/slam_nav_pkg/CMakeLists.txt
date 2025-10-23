@@ -211,11 +211,6 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-add_executable(fake_movebase_node src/fake_movebase_node.cpp)
- target_link_libraries(fake_movebase_node
-   ${catkin_LIBRARIES}
- )
-
 add_executable(fake_movebase_new_node src/fake_movebase_new_node.cpp)
  target_link_libraries(fake_movebase_new_node
    ${catkin_LIBRARIES}

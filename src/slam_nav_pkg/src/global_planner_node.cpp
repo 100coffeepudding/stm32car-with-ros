@@ -112,7 +112,7 @@ public:
             double cos_angle = dot / (norm1 * norm2 + 1e-6);
 
             // 当方向变化超过阈值（比如15°）时保留点
-            if (cos_angle < cos(15.0 * M_PI / 180.0))
+            if (cos_angle < cos(20.0 * M_PI / 180.0))
                 simplified.push_back(path_points[i]);
         }
 
